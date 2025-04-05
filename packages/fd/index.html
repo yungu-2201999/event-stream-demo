@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Stream Demo</title>
+</head>
+
+<body>
+
+  <script>
+    if (!!window.EventSource) {
+      var source = new EventSource('http://localhost:3000/countdown')
+
+      source.addEventListener('message', function (e) {
+        console.log(e)
+        document.getElementById('data').innerHTML = e.data
+         // 在这里处理数据，例如更新页面内容或执行其他操作
+      }, false)
+
+      source.addEventListener('open', function (e) {
+        console.log("object")
+        document.getElementById('state').innerHTML = "Connected"
+      }, false)
+
+      source.addEventListener('error', function (e) {
+        const id_state = document.getElementById('state')
+        if (e.eventPhase == EventSource.CLOSED)
+        // 处理连接关闭的情况，例如显示错误信息或重新连接
+          source.close()
+        if (e.target.readyState == EventSource.CLOSED) {
+          id_state.innerHTML = "Disconnected"
+        }
+        else if (e.target.readyState == EventSource.CONNECTING) {
+          id_state.innerHTML = "Connecting..."
+        }
+      }, false)
+    } else {
+      console.log("Your browser doesn't support SSE")
+    }
+  </script>
+  <h1>SSE: <span id="state"></span></h1>
+  <h3>Data: <span id="data"></span></h3>
+
+</body>
+
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Stream Demo</title>
+</head>
+
+<body>
+  <script>
+    (async () => {
+      const res = await fetch('http://localhost:3000/countdown')
+      console.log(res);
+      const reader = res.body.getReader();
+      const textDecoder = new TextDecoder();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const text = textDecoder.decode(value, { stream: true });
+        console.log(text);
+      }
+    })();
+  </script>
+</body>
+
+</html>
